@@ -4,6 +4,8 @@ Web-app voor de coach om klantdossiers te beheren: profiel, notities,
 resultaten en test resultaten, met cloud-opslag (Supabase). Zie
 `specs/specificaties.md` voor de volledige specificaties.
 
+**Live:** https://prime-coach-seven.vercel.app
+
 ## Structuur
 
 - `docs/` — algemene documentatie, notities, achtergrond
