@@ -60,70 +60,88 @@ export function LogTable({
     });
   }
 
+  const addFormId = "log-table-add-row";
+  const editFormId = editingId ? `log-table-edit-${editingId}` : null;
+
   return (
     <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-sm">
-      <table className="w-full min-w-max text-sm">
+      {/* Losstaande <form>-elementen: HTML staat geen <form> toe als omhulsel
+          rond meerdere <td>'s binnen een <tr>, dus velden koppelen we via het
+          form-attribuut aan een form die hier los van de tabelstructuur staat. */}
+      <form id={addFormId} action={handleAdd} className="hidden" />
+      {editFormId && (
+        <form
+          id={editFormId}
+          action={(fd) => {
+            if (editingId) handleUpdate(editingId, fd);
+          }}
+          className="hidden"
+        />
+      )}
+
+      <table className="w-full table-fixed text-sm">
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-neutral-500">
-            <th className="px-3 py-2 font-medium">Datum</th>
+            <th className="w-36 px-3 py-2 font-medium">Datum</th>
             {columns.map((col) => (
               <th key={col.key} className="px-3 py-2 font-medium">
                 {col.label}
               </th>
             ))}
             {extraColumnLabel && (
-              <th className="px-3 py-2 font-medium">{extraColumnLabel}</th>
+              <th className="w-24 px-3 py-2 font-medium">{extraColumnLabel}</th>
             )}
-            <th className="px-3 py-2 font-medium">Acties</th>
+            <th className="w-40 px-3 py-2 font-medium">Acties</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row) =>
             editingId === row.id ? (
-              <tr key={row.id} className="border-b border-neutral-100 align-top">
-                <td className="px-3 py-2" colSpan={columns.length + (extraColumnLabel ? 2 : 1)}>
-                  <form
-                    action={(fd) => handleUpdate(row.id, fd)}
-                    className="flex flex-wrap items-end gap-3"
+              <tr key={row.id} className="border-b border-neutral-100 bg-emerald-50/40">
+                <td className="px-2 py-2">
+                  <input
+                    form={editFormId ?? undefined}
+                    name="log_date"
+                    type="date"
+                    defaultValue={row.log_date}
+                    required
+                    className="input"
+                  />
+                </td>
+                {columns.map((col) => (
+                  <td key={col.key} className="px-2 py-2">
+                    <input
+                      form={editFormId ?? undefined}
+                      name={col.key}
+                      type="text"
+                      inputMode={col.type === "number" ? "decimal" : undefined}
+                      defaultValue={row[col.key] ?? ""}
+                      placeholder={col.placeholder ?? col.label}
+                      className="input"
+                    />
+                  </td>
+                ))}
+                {extraColumnKey && (
+                  <td className="px-3 py-2 text-neutral-400">
+                    {row[extraColumnKey] ?? "—"}
+                  </td>
+                )}
+                <td className="whitespace-nowrap px-2 py-2">
+                  <button
+                    form={editFormId ?? undefined}
+                    type="submit"
+                    disabled={isPending}
+                    className="mr-2 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
                   >
-                    <Field label="Datum" hideLabel>
-                      <input
-                        name="log_date"
-                        type="date"
-                        defaultValue={row.log_date}
-                        required
-                        className="input"
-                      />
-                    </Field>
-                    {columns.map((col) => (
-                      <Field key={col.key} label={col.label} hideLabel>
-                        <input
-                          name={col.key}
-                          type={col.type === "number" ? "text" : "text"}
-                          inputMode={col.type === "number" ? "decimal" : undefined}
-                          defaultValue={row[col.key] ?? ""}
-                          placeholder={col.placeholder ?? col.label}
-                          className="input"
-                        />
-                      </Field>
-                    ))}
-                    <div className="flex gap-2 pb-0.5">
-                      <button
-                        type="submit"
-                        disabled={isPending}
-                        className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
-                      >
-                        Opslaan
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditingId(null)}
-                        className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-50"
-                      >
-                        Annuleren
-                      </button>
-                    </div>
-                  </form>
+                    Opslaan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(null)}
+                    className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-50"
+                  >
+                    Annuleren
+                  </button>
                 </td>
               </tr>
             ) : (
@@ -160,73 +178,55 @@ export function LogTable({
           )}
 
           <tr className="bg-neutral-50">
-            <td className="px-3 py-2" colSpan={columns.length + (extraColumnLabel ? 2 : 1) + 1}>
-              <form
-                action={handleAdd}
-                className="flex flex-wrap items-end gap-3"
+            <td className="px-2 py-2">
+              <input
+                form={addFormId}
+                name="log_date"
+                type="date"
+                defaultValue={new Date().toISOString().slice(0, 10)}
+                required
+                className="input"
+              />
+            </td>
+            {columns.map((col) => (
+              <td key={col.key} className="px-2 py-2">
+                <input
+                  form={addFormId}
+                  name={col.key}
+                  type="text"
+                  inputMode={col.type === "number" ? "decimal" : undefined}
+                  placeholder={col.placeholder ?? col.label}
+                  className="input"
+                />
+              </td>
+            ))}
+            {extraColumnKey && (
+              <td className="px-3 py-2 text-neutral-400">automatisch</td>
+            )}
+            <td className="whitespace-nowrap px-2 py-2">
+              <button
+                form={addFormId}
+                type="submit"
+                disabled={isPending}
+                className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
               >
-                <Field label="Datum" hideLabel>
-                  <input
-                    name="log_date"
-                    type="date"
-                    defaultValue={new Date().toISOString().slice(0, 10)}
-                    required
-                    className="input"
-                  />
-                </Field>
-                {columns.map((col) => (
-                  <Field key={col.key} label={col.label} hideLabel>
-                    <input
-                      name={col.key}
-                      type="text"
-                      inputMode={col.type === "number" ? "decimal" : undefined}
-                      placeholder={col.placeholder ?? col.label}
-                      className="input"
-                    />
-                  </Field>
-                ))}
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
-                >
-                  + Rij toevoegen
-                </button>
-              </form>
+                + Toevoegen
+              </button>
             </td>
           </tr>
 
           {rows.length === 0 && (
             <tr>
               <td
-                colSpan={columns.length + (extraColumnLabel ? 2 : 1) + 1}
-                className="px-3 py-6 text-center text-neutral-400"
+                colSpan={columns.length + (extraColumnLabel ? 1 : 0) + 2}
+                className="px-3 py-4 text-center text-neutral-400"
               >
-                Nog geen gegevens gelogd.
+                Nog geen gegevens gelogd — voeg hierboven een eerste rij toe.
               </td>
             </tr>
           )}
         </tbody>
       </table>
     </div>
-  );
-}
-
-function Field({
-  label,
-  children,
-  hideLabel,
-}: {
-  label: string;
-  children: React.ReactNode;
-  hideLabel?: boolean;
-}) {
-  return (
-    <label className="flex flex-col gap-1">
-      <span className={hideLabel ? "sr-only" : "text-xs font-medium text-neutral-500"}>
-        {label}
-      </span>
-      {children}
-    </label>
   );
 }
