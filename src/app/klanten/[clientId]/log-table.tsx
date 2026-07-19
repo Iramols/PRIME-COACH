@@ -104,7 +104,9 @@ export function LogTable({
             {extraColumnLabel && (
               <th className="w-24 px-3 py-2 font-medium">{extraColumnLabel}</th>
             )}
-            <th className="w-40 px-3 py-2 font-medium">Acties</th>
+            <th className="sticky right-0 w-40 border-l border-neutral-200 bg-neutral-50 px-3 py-2 font-medium">
+              Acties
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -139,7 +141,7 @@ export function LogTable({
                     {row[extraColumnKey] ?? "—"}
                   </td>
                 )}
-                <td className="whitespace-nowrap px-2 py-2">
+                <td className="sticky right-0 whitespace-nowrap border-l border-neutral-200 bg-emerald-50 px-2 py-2">
                   <button
                     form={editFormId ?? undefined}
                     type="submit"
@@ -172,7 +174,7 @@ export function LogTable({
                     {row[extraColumnKey] ?? "—"}
                   </td>
                 )}
-                <td className="whitespace-nowrap px-3 py-2">
+                <td className="sticky right-0 whitespace-nowrap border-l border-neutral-100 bg-white px-3 py-2">
                   <button
                     onClick={() => setEditingId(row.id)}
                     className="mr-3 text-xs font-medium text-emerald-700 hover:underline"
@@ -216,7 +218,7 @@ export function LogTable({
             {extraColumnKey && (
               <td className="px-3 py-2 text-neutral-400">automatisch</td>
             )}
-            <td className="whitespace-nowrap px-2 py-2">
+            <td className="sticky right-0 whitespace-nowrap border-l border-neutral-200 bg-neutral-50 px-2 py-2">
               <button
                 form={addFormId}
                 type="submit"
