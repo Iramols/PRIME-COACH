@@ -68,7 +68,7 @@ export function LogTable({
   // weinig ruimte scrolt de tabel horizontaal (zie overflow-x-auto) in
   // plaats van kolommen te verkleinen.
   const minTableWidth =
-    80 /* Datum (mobiel formaat) */ +
+    128 /* Datum */ +
     columns.length * 128 +
     (extraColumnKey ? 96 : 0) /* extra kolom (bv. BMI) */ +
     160; /* Acties */
@@ -95,7 +95,7 @@ export function LogTable({
       >
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-neutral-500">
-            <th className="w-20 sm:w-28 px-2 py-2 font-medium">Datum</th>
+            <th className="w-32 px-1 py-2 font-medium">Datum</th>
             {columns.map((col) => (
               <th key={col.key} className="px-3 py-2 font-medium">
                 {col.label}
@@ -111,7 +111,7 @@ export function LogTable({
           {rows.map((row) =>
             editingId === row.id ? (
               <tr key={row.id} className="border-b border-neutral-100 bg-emerald-50/40">
-                <td className="px-2 py-2">
+                <td className="px-1 py-2">
                   <input
                     form={editFormId ?? undefined}
                     name="log_date"
@@ -191,7 +191,7 @@ export function LogTable({
           )}
 
           <tr className="bg-neutral-50">
-            <td className="px-2 py-2">
+            <td className="px-1 py-2">
               <input
                 form={addFormId}
                 name="log_date"
