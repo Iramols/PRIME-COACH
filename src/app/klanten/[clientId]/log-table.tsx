@@ -63,6 +63,16 @@ export function LogTable({
   const addFormId = "log-table-add-row";
   const editFormId = editingId ? `log-table-edit-${editingId}` : null;
 
+  // Minimumbreedte per kolom zodat invoervelden op een smal (staand)
+  // telefoonscherm nooit worden samengeperst tot ze overlappen — bij te
+  // weinig ruimte scrolt de tabel horizontaal (zie overflow-x-auto) in
+  // plaats van kolommen te verkleinen.
+  const minTableWidth =
+    144 /* Datum */ +
+    columns.length * 128 +
+    (extraColumnKey ? 96 : 0) /* extra kolom (bv. BMI) */ +
+    160; /* Acties */
+
   return (
     <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-sm">
       {/* Losstaande <form>-elementen: HTML staat geen <form> toe als omhulsel
@@ -79,7 +89,10 @@ export function LogTable({
         />
       )}
 
-      <table className="w-full table-fixed text-sm">
+      <table
+        className="w-full table-fixed text-sm"
+        style={{ minWidth: minTableWidth }}
+      >
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-neutral-500">
             <th className="w-36 px-3 py-2 font-medium">Datum</th>
