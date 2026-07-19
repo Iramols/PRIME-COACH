@@ -112,7 +112,7 @@ export function LogTable({
         <tbody>
           {rows.map((row) =>
             editingId === row.id ? (
-              <tr key={row.id} className="border-b border-neutral-100 bg-emerald-50/40">
+              <tr key={`${row.id}-edit`} className="border-b border-neutral-100 bg-emerald-50/40">
                 <td className="px-1 py-2">
                   <input
                     form={editFormId ?? undefined}
@@ -176,12 +176,14 @@ export function LogTable({
                 )}
                 <td className="sticky right-0 whitespace-nowrap border-l border-neutral-100 bg-white px-3 py-2">
                   <button
+                    type="button"
                     onClick={() => setEditingId(row.id)}
                     className="mr-3 text-xs font-medium text-emerald-700 hover:underline"
                   >
                     Bewerken
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDelete(row.id)}
                     className="text-xs font-medium text-red-600 hover:underline"
                   >
