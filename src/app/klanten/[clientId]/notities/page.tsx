@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Note } from "@/lib/types";
-import { LogTable } from "../log-table";
+import { getSignedPhotoUrl } from "@/lib/photo-upload";
+import { LogTable, type LogRow } from "../log-table";
 import { addNote, updateNote, deleteNote } from "./actions";
 
 export default async function NotitiesPage({
@@ -17,17 +18,25 @@ export default async function NotitiesPage({
     .order("log_date", { ascending: false })
     .returns<Note[]>();
 
+  const rows = await Promise.all(
+    (notes ?? []).map(async (note) => ({
+      ...note,
+      photo_url: await getSignedPhotoUrl(supabase, note.photo_path),
+    })),
+  );
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-lg font-semibold text-neutral-900">Notities</h1>
       <LogTable
         clientId={clientId}
-        rows={notes ?? []}
+        rows={rows as unknown as LogRow[]}
         columns={[
           { key: "nutrition", label: "Voeding" },
           { key: "training", label: "Training" },
           { key: "remarks", label: "Bijzonderheden" },
         ]}
+        photoEnabled
         onAdd={addNote}
         onUpdate={updateNote}
         onDelete={deleteNote}

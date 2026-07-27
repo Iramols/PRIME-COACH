@@ -19,6 +19,7 @@ export type Note = {
   nutrition: string | null;
   training: string | null;
   remarks: string | null;
+  photo_path: string | null;
   created_at: string;
 };
 
@@ -32,6 +33,7 @@ export type Result = {
   visceral_fat: number | null;
   muscle_mass_kg: number | null;
   muscle_mass_pct: number | null;
+  photo_path: string | null;
   created_at: string;
 };
 
@@ -42,5 +44,6 @@ export type TestResult = {
   col1: string | null;
   col2: string | null;
   col3: string | null;
+  photo_path: string | null;
   created_at: string;
 };

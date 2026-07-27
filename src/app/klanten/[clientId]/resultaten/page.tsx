@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Client, Result } from "@/lib/types";
 import { calculateBmi } from "@/lib/calculations";
+import { getSignedPhotoUrl } from "@/lib/photo-upload";
 import { LogTable, type LogRow } from "../log-table";
 import { addResult, updateResult, deleteResult } from "./actions";
 
@@ -28,10 +29,13 @@ export default async function ResultatenPage({
 
   const heightCm = client?.height_cm ?? null;
 
-  const rows = (results ?? []).map((result) => ({
-    ...result,
-    bmi: calculateBmi(result.weight_kg, heightCm) ?? "—",
-  }));
+  const rows = await Promise.all(
+    (results ?? []).map(async (result) => ({
+      ...result,
+      bmi: calculateBmi(result.weight_kg, heightCm) ?? "—",
+      photo_url: await getSignedPhotoUrl(supabase, result.photo_path),
+    })),
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -53,6 +57,7 @@ export default async function ResultatenPage({
         ]}
         extraColumnLabel="BMI"
         extraColumnKey="bmi"
+        photoEnabled
         onAdd={addResult}
         onUpdate={updateResult}
         onDelete={deleteResult}

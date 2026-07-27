@@ -24,6 +24,7 @@ create table if not exists public.notes (
   nutrition text,
   training text,
   remarks text,
+  photo_path text,
   created_at timestamptz not null default now()
 );
 
@@ -38,6 +39,7 @@ create table if not exists public.results (
   visceral_fat numeric(4,1),
   muscle_mass_kg numeric(5,2),
   muscle_mass_pct numeric(4,1),
+  photo_path text,
   created_at timestamptz not null default now()
 );
 
@@ -49,8 +51,14 @@ create table if not exists public.test_results (
   col1 text,
   col2 text,
   col3 text,
+  photo_path text,
   created_at timestamptz not null default now()
 );
+
+-- Bestaande tabellen (indien al eerder aangemaakt zonder foto-kolom) bijwerken
+alter table public.notes add column if not exists photo_path text;
+alter table public.results add column if not exists photo_path text;
+alter table public.test_results add column if not exists photo_path text;
 
 -- updated_at automatisch bijwerken op clients
 create or replace function public.set_updated_at()
@@ -95,3 +103,30 @@ create policy "coach manages test_results of own clients" on public.test_results
   for all
   using (exists (select 1 from public.clients c where c.id = test_results.client_id and c.coach_id = auth.uid()))
   with check (exists (select 1 from public.clients c where c.id = test_results.client_id and c.coach_id = auth.uid()));
+
+-- Foto's bij Notities/Resultaten/Test resultaten: privé Storage bucket.
+-- Bestandspad is altijd "<client_id>/<bestandsnaam>" — de policy hieronder
+-- controleert dat de map (client_id) bij een klant van de ingelogde coach hoort.
+insert into storage.buckets (id, name, public)
+values ('log-photos', 'log-photos', false)
+on conflict (id) do nothing;
+
+drop policy if exists "coach manages photos of own clients" on storage.objects;
+create policy "coach manages photos of own clients" on storage.objects
+  for all
+  using (
+    bucket_id = 'log-photos'
+    and exists (
+      select 1 from public.clients c
+      where c.id::text = (storage.foldername(name))[1]
+        and c.coach_id = auth.uid()
+    )
+  )
+  with check (
+    bucket_id = 'log-photos'
+    and exists (
+      select 1 from public.clients c
+      where c.id::text = (storage.foldername(name))[1]
+        and c.coach_id = auth.uid()
+    )
+  );

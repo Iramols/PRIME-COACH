@@ -25,6 +25,7 @@ type Props = {
   onDelete: (id: string) => Promise<void>;
   extraColumnLabel?: string;
   extraColumnKey?: string;
+  photoEnabled?: boolean;
 };
 
 export function LogTable({
@@ -36,6 +37,7 @@ export function LogTable({
   onDelete,
   extraColumnLabel,
   extraColumnKey,
+  photoEnabled,
 }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -71,6 +73,7 @@ export function LogTable({
     128 /* Datum */ +
     columns.length * 128 +
     (extraColumnKey ? 96 : 0) /* extra kolom (bv. BMI) */ +
+    (photoEnabled ? 112 : 0) /* Foto */ +
     160; /* Acties */
 
   return (
@@ -103,6 +106,9 @@ export function LogTable({
             ))}
             {extraColumnLabel && (
               <th className="w-24 px-3 py-2 font-medium">{extraColumnLabel}</th>
+            )}
+            {photoEnabled && (
+              <th className="w-28 px-3 py-2 font-medium">Foto</th>
             )}
             <th className="sticky right-0 w-40 border-l border-neutral-200 bg-neutral-50 px-3 py-2 font-medium">
               Acties
@@ -141,6 +147,24 @@ export function LogTable({
                     {row[extraColumnKey] ?? "—"}
                   </td>
                 )}
+                {photoEnabled && (
+                  <td className="px-2 py-2">
+                    {row.photo_url && (
+                      <img
+                        src={String(row.photo_url)}
+                        alt=""
+                        className="mb-1 h-8 w-8 rounded object-cover"
+                      />
+                    )}
+                    <input
+                      form={editFormId ?? undefined}
+                      name="photo"
+                      type="file"
+                      accept="image/*"
+                      className="w-full text-xs"
+                    />
+                  </td>
+                )}
                 <td className="sticky right-0 whitespace-nowrap border-l border-neutral-200 bg-emerald-50 px-2 py-2">
                   <button
                     form={editFormId ?? undefined}
@@ -172,6 +196,21 @@ export function LogTable({
                 {extraColumnKey && (
                   <td className="px-3 py-2 text-neutral-700">
                     {row[extraColumnKey] ?? "—"}
+                  </td>
+                )}
+                {photoEnabled && (
+                  <td className="px-2 py-2">
+                    {row.photo_url ? (
+                      <a href={String(row.photo_url)} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={String(row.photo_url)}
+                          alt=""
+                          className="h-10 w-10 rounded object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <span className="text-neutral-300">—</span>
+                    )}
                   </td>
                 )}
                 <td className="sticky right-0 whitespace-nowrap border-l border-neutral-100 bg-white px-3 py-2">
@@ -220,6 +259,17 @@ export function LogTable({
             {extraColumnKey && (
               <td className="px-3 py-2 text-neutral-400">automatisch</td>
             )}
+            {photoEnabled && (
+              <td className="px-2 py-2">
+                <input
+                  form={addFormId}
+                  name="photo"
+                  type="file"
+                  accept="image/*"
+                  className="w-full text-xs"
+                />
+              </td>
+            )}
             <td className="sticky right-0 whitespace-nowrap border-l border-neutral-200 bg-neutral-50 px-2 py-2">
               <button
                 form={addFormId}
@@ -235,7 +285,12 @@ export function LogTable({
           {rows.length === 0 && (
             <tr>
               <td
-                colSpan={columns.length + (extraColumnLabel ? 1 : 0) + 2}
+                colSpan={
+                  columns.length +
+                  (extraColumnLabel ? 1 : 0) +
+                  (photoEnabled ? 1 : 0) +
+                  2
+                }
                 className="px-3 py-4 text-center text-neutral-400"
               >
                 Nog geen gegevens gelogd — voeg hierboven een eerste rij toe.

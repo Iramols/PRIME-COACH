@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { uploadPhotoIfPresent, deletePhoto } from "@/lib/photo-upload";
 
 function numOrNull(value: FormDataEntryValue | null): number | null {
   if (value === null) return null;
@@ -25,26 +26,57 @@ function resultFields(formData: FormData) {
 
 export async function addResult(clientId: string, formData: FormData) {
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("results")
-    .insert({ client_id: clientId, ...resultFields(formData) });
+  const photoPath = await uploadPhotoIfPresent(supabase, clientId, formData);
+
+  const { error } = await supabase.from("results").insert({
+    client_id: clientId,
+    ...resultFields(formData),
+    photo_path: photoPath,
+  });
   if (error) throw new Error(error.message);
   revalidatePath(`/klanten/${clientId}/resultaten`);
 }
 
 export async function updateResult(id: string, formData: FormData) {
   const supabase = await createClient();
-  const { error } = await supabase
+
+  const { data: existing } = await supabase
     .from("results")
-    .update(resultFields(formData))
-    .eq("id", id);
+    .select("client_id, photo_path")
+    .eq("id", id)
+    .single();
+
+  const update: Record<string, string | number | null> = resultFields(formData);
+
+  if (existing) {
+    const newPhotoPath = await uploadPhotoIfPresent(
+      supabase,
+      existing.client_id,
+      formData,
+    );
+    if (newPhotoPath) {
+      await deletePhoto(supabase, existing.photo_path);
+      update.photo_path = newPhotoPath;
+    }
+  }
+
+  const { error } = await supabase.from("results").update(update).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/klanten", "layout");
 }
 
 export async function deleteResult(id: string) {
   const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("results")
+    .select("photo_path")
+    .eq("id", id)
+    .single();
+
   const { error } = await supabase.from("results").delete().eq("id", id);
   if (error) throw new Error(error.message);
+
+  if (existing) await deletePhoto(supabase, existing.photo_path);
   revalidatePath("/klanten", "layout");
 }
