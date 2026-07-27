@@ -118,7 +118,7 @@ create policy "coach manages photos of own clients" on storage.objects
     bucket_id = 'log-photos'
     and exists (
       select 1 from public.clients c
-      where c.id::text = (storage.foldername(name))[1]
+      where c.id::text = (storage.foldername(objects.name))[1]
         and c.coach_id = auth.uid()
     )
   )
@@ -126,7 +126,7 @@ create policy "coach manages photos of own clients" on storage.objects
     bucket_id = 'log-photos'
     and exists (
       select 1 from public.clients c
-      where c.id::text = (storage.foldername(name))[1]
+      where c.id::text = (storage.foldername(objects.name))[1]
         and c.coach_id = auth.uid()
     )
   );
