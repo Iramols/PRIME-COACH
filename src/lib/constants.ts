@@ -29,7 +29,7 @@ export const DEFAULT_TAB_HREF = "notities";
 export const NAV_TABS: (NavTab | NavGroup)[] = [
   { href: "notities", label: "Notities" },
   { href: "resultaten", label: "Resultaten" },
-  { href: "test-resultaten", label: "Test resultaten" },
+  { href: "lenigheid", label: "Lenigheid" },
   {
     label: "Uithoudingsvermogen",
     children: [

@@ -37,13 +37,13 @@ export type Result = {
   created_at: string;
 };
 
-export type TestResult = {
+export type LenigheidTest = {
   id: string;
   client_id: string;
   log_date: string;
-  col1: string | null;
-  col2: string | null;
-  col3: string | null;
+  sit_reach_cm: number | null;
+  shoulder_stretch_cm: number | null;
+  straight_leg_bend_cm: number | null;
   photo_path: string | null;
   created_at: string;
 };
