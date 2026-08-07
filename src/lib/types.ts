@@ -69,3 +69,14 @@ export type SubMaxAerobeTest = {
   photo_path: string | null;
   created_at: string;
 };
+
+export type AnaerobeTest = {
+  id: string;
+  client_id: string;
+  log_date: string;
+  quebec_10s_watt: number | null;
+  vertical_jump_cm: number | null;
+  wingate_watt: number | null;
+  photo_path: string | null;
+  created_at: string;
+};

@@ -79,6 +79,18 @@ create table if not exists public.sub_max_aerobe_testen (
   created_at timestamptz not null default now()
 );
 
+-- Uithoudingsvermogen > Anaerobe testen
+create table if not exists public.anaerobe_testen (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  log_date date not null default current_date,
+  quebec_10s_watt numeric(6,1),
+  vertical_jump_cm numeric(5,1),
+  wingate_watt numeric(6,1),
+  photo_path text,
+  created_at timestamptz not null default now()
+);
+
 -- PWC170 is op verzoek weer verwijderd uit Max aerobe testen
 alter table public.max_aerobe_testen drop column if exists pwc170_watt;
 
@@ -108,6 +120,7 @@ alter table public.results enable row level security;
 alter table public.test_results enable row level security;
 alter table public.max_aerobe_testen enable row level security;
 alter table public.sub_max_aerobe_testen enable row level security;
+alter table public.anaerobe_testen enable row level security;
 
 drop policy if exists "coach manages own clients" on public.clients;
 create policy "coach manages own clients" on public.clients
@@ -144,6 +157,12 @@ create policy "coach manages sub_max_aerobe_testen of own clients" on public.sub
   for all
   using (exists (select 1 from public.clients c where c.id = sub_max_aerobe_testen.client_id and c.coach_id = auth.uid()))
   with check (exists (select 1 from public.clients c where c.id = sub_max_aerobe_testen.client_id and c.coach_id = auth.uid()));
+
+drop policy if exists "coach manages anaerobe_testen of own clients" on public.anaerobe_testen;
+create policy "coach manages anaerobe_testen of own clients" on public.anaerobe_testen
+  for all
+  using (exists (select 1 from public.clients c where c.id = anaerobe_testen.client_id and c.coach_id = auth.uid()))
+  with check (exists (select 1 from public.clients c where c.id = anaerobe_testen.client_id and c.coach_id = auth.uid()));
 
 -- Foto's bij Notities/Resultaten/Test resultaten: privé Storage bucket.
 -- Bestandspad is altijd "<client_id>/<bestandsnaam>" — de policy hieronder
