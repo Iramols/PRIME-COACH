@@ -63,11 +63,13 @@ create table if not exists public.max_aerobe_testen (
   six_min_loop_m numeric(6,1),
   shuttle_run_m numeric(6,1),
   cooper_test_m numeric(6,1),
-  pwc170_watt numeric(6,1),
   one_mile_time text,
   photo_path text,
   created_at timestamptz not null default now()
 );
+
+-- PWC170 is op verzoek weer verwijderd uit Max aerobe testen
+alter table public.max_aerobe_testen drop column if exists pwc170_watt;
 
 -- Bestaande tabellen (indien al eerder aangemaakt zonder foto-kolom) bijwerken
 alter table public.notes add column if not exists photo_path text;

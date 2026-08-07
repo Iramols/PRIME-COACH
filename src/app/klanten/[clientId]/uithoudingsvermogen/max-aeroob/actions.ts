@@ -24,7 +24,6 @@ function fields(formData: FormData) {
     six_min_loop_m: numOrNull(formData.get("six_min_loop_m")),
     shuttle_run_m: numOrNull(formData.get("shuttle_run_m")),
     cooper_test_m: numOrNull(formData.get("cooper_test_m")),
-    pwc170_watt: numOrNull(formData.get("pwc170_watt")),
     one_mile_time: strOrNull(formData.get("one_mile_time")),
   };
 }

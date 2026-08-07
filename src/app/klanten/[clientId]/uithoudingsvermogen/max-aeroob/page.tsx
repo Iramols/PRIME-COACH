@@ -39,7 +39,6 @@ export default async function MaxAerobeTestenPage({
           { key: "six_min_loop_m", label: "6 min loop (m)", type: "number" },
           { key: "shuttle_run_m", label: "Shuttlerun (m)", type: "number" },
           { key: "cooper_test_m", label: "Coopertest (m)", type: "number" },
-          { key: "pwc170_watt", label: "PWC170 (Watt)", type: "number" },
           {
             key: "one_mile_time",
             label: "1 mijl (min:sec)",

@@ -55,7 +55,6 @@ export type MaxAerobeTest = {
   six_min_loop_m: number | null;
   shuttle_run_m: number | null;
   cooper_test_m: number | null;
-  pwc170_watt: number | null;
   one_mile_time: string | null;
   photo_path: string | null;
   created_at: string;
