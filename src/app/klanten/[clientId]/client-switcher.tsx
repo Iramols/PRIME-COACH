@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { Client } from "@/lib/types";
-import { NAV_TABS } from "@/lib/constants";
+import { DEFAULT_TAB_HREF } from "@/lib/constants";
 
 export function ClientSwitcher({
   clients,
@@ -16,7 +16,7 @@ export function ClientSwitcher({
   return (
     <select
       value={activeClientId}
-      onChange={(e) => router.push(`/klanten/${e.target.value}/${NAV_TABS[0].href}`)}
+      onChange={(e) => router.push(`/klanten/${e.target.value}/${DEFAULT_TAB_HREF}`)}
       className="rounded-md border border-neutral-300 bg-white px-2 py-1.5 text-sm font-medium text-neutral-700"
     >
       {clients.map((client) => (

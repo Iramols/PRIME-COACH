@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { NAV_TABS } from "@/lib/constants";
+import { DEFAULT_TAB_HREF } from "@/lib/constants";
 
 export async function createKlant(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
@@ -26,7 +26,7 @@ export async function createKlant(formData: FormData) {
   }
 
   revalidatePath("/klanten");
-  redirect(`/klanten/${data.id}/${NAV_TABS[0].href}`);
+  redirect(`/klanten/${data.id}/${DEFAULT_TAB_HREF}`);
 }
 
 export async function deleteKlant(clientId: string) {

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { NAV_TABS } from "@/lib/constants";
+import { DEFAULT_TAB_HREF } from "@/lib/constants";
 
 export default async function ClientIndexPage({
   params,
@@ -7,5 +7,5 @@ export default async function ClientIndexPage({
   params: Promise<{ clientId: string }>;
 }) {
   const { clientId } = await params;
-  redirect(`/klanten/${clientId}/${NAV_TABS[0].href}`);
+  redirect(`/klanten/${clientId}/${DEFAULT_TAB_HREF}`);
 }

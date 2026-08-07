@@ -4,7 +4,7 @@ import { createKlant, deleteKlant } from "./actions";
 import { LogoutButton } from "../logout-button";
 import { DeleteClientButton } from "./delete-client-button";
 import type { Client } from "@/lib/types";
-import { NAV_TABS } from "@/lib/constants";
+import { DEFAULT_TAB_HREF } from "@/lib/constants";
 
 export default async function KlantenPage() {
   const supabase = await createClient();
@@ -64,7 +64,7 @@ export default async function KlantenPage() {
             className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-3 shadow-sm hover:border-emerald-400"
           >
             <Link
-              href={`/klanten/${client.id}/${NAV_TABS[0].href}`}
+              href={`/klanten/${client.id}/${DEFAULT_TAB_HREF}`}
               className="flex flex-1 items-center justify-between"
             >
               <span className="font-medium text-neutral-900">

@@ -20,8 +20,22 @@ export const ACTIVITEITSNIVEAU_OPTIES = [
   "Zeer actief (dagelijks intensief)",
 ] as const;
 
-export const NAV_TABS = [
+export type NavTab = { href: string; label: string };
+export type NavGroup = { label: string; children: NavTab[] };
+
+// Tab waar de coach na inloggen / het aanmaken van een klant op landt.
+export const DEFAULT_TAB_HREF = "notities";
+
+export const NAV_TABS: (NavTab | NavGroup)[] = [
   { href: "notities", label: "Notities" },
   { href: "resultaten", label: "Resultaten" },
   { href: "test-resultaten", label: "Test resultaten" },
-] as const;
+  {
+    label: "Uithoudingsvermogen",
+    children: [
+      { href: "uithoudingsvermogen/max-aeroob", label: "Max aerobe testen" },
+      { href: "uithoudingsvermogen/sub-max-aeroob", label: "Sub max aerobe testen" },
+      { href: "uithoudingsvermogen/anaeroob", label: "Anaerobe testen" },
+    ],
+  },
+];
