@@ -59,3 +59,13 @@ export type MaxAerobeTest = {
   photo_path: string | null;
   created_at: string;
 };
+
+export type SubMaxAerobeTest = {
+  id: string;
+  client_id: string;
+  log_date: string;
+  astrand_vo2max_lmin: number | null;
+  six_min_walk_m: number | null;
+  photo_path: string | null;
+  created_at: string;
+};
