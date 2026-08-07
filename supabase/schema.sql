@@ -115,6 +115,25 @@ create table if not exists public.anaerobe_testen (
   created_at timestamptz not null default now()
 );
 
+-- Kracht
+create table if not exists public.kracht_testen (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  log_date date not null default current_date,
+  reverse_pushup_cm numeric(5,1),
+  grip_strength_kg numeric(5,1),
+  pushups_30s numeric(4,0),
+  leg_raise_time text,
+  wall_sit_sec numeric(5,1),
+  standing_long_jump_cm numeric(5,1),
+  situps_per_min numeric(4,0),
+  plank_time text,
+  one_rm_kg numeric(5,1),
+  one_rm_estimate_kg numeric(5,1),
+  photo_path text,
+  created_at timestamptz not null default now()
+);
+
 -- PWC170 is op verzoek weer verwijderd uit Max aerobe testen
 alter table public.max_aerobe_testen drop column if exists pwc170_watt;
 
@@ -145,6 +164,7 @@ alter table public.lenigheid_testen enable row level security;
 alter table public.max_aerobe_testen enable row level security;
 alter table public.sub_max_aerobe_testen enable row level security;
 alter table public.anaerobe_testen enable row level security;
+alter table public.kracht_testen enable row level security;
 
 drop policy if exists "coach manages own clients" on public.clients;
 create policy "coach manages own clients" on public.clients
@@ -189,7 +209,13 @@ create policy "coach manages anaerobe_testen of own clients" on public.anaerobe_
   using (exists (select 1 from public.clients c where c.id = anaerobe_testen.client_id and c.coach_id = auth.uid()))
   with check (exists (select 1 from public.clients c where c.id = anaerobe_testen.client_id and c.coach_id = auth.uid()));
 
--- Foto's bij Notities/Resultaten/Lenigheid/Uithoudingsvermogen: privé Storage bucket.
+drop policy if exists "coach manages kracht_testen of own clients" on public.kracht_testen;
+create policy "coach manages kracht_testen of own clients" on public.kracht_testen
+  for all
+  using (exists (select 1 from public.clients c where c.id = kracht_testen.client_id and c.coach_id = auth.uid()))
+  with check (exists (select 1 from public.clients c where c.id = kracht_testen.client_id and c.coach_id = auth.uid()));
+
+-- Foto's bij Notities/Resultaten/Lenigheid/Uithoudingsvermogen/Kracht: privé Storage bucket.
 -- Bestandspad is altijd "<client_id>/<bestandsnaam>" — de policy hieronder
 -- controleert dat de map (client_id) bij een klant van de ingelogde coach hoort.
 insert into storage.buckets (id, name, public)

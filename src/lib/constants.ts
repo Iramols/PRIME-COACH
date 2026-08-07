@@ -30,6 +30,7 @@ export const NAV_TABS: (NavTab | NavGroup)[] = [
   { href: "notities", label: "Notities" },
   { href: "resultaten", label: "Resultaten" },
   { href: "lenigheid", label: "Lenigheid" },
+  { href: "kracht", label: "Kracht" },
   {
     label: "Uithoudingsvermogen",
     children: [

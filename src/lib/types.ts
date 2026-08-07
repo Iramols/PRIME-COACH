@@ -80,3 +80,21 @@ export type AnaerobeTest = {
   photo_path: string | null;
   created_at: string;
 };
+
+export type KrachtTest = {
+  id: string;
+  client_id: string;
+  log_date: string;
+  reverse_pushup_cm: number | null;
+  grip_strength_kg: number | null;
+  pushups_30s: number | null;
+  leg_raise_time: string | null;
+  wall_sit_sec: number | null;
+  standing_long_jump_cm: number | null;
+  situps_per_min: number | null;
+  plank_time: string | null;
+  one_rm_kg: number | null;
+  one_rm_estimate_kg: number | null;
+  photo_path: string | null;
+  created_at: string;
+};
