@@ -55,6 +55,20 @@ create table if not exists public.test_results (
   created_at timestamptz not null default now()
 );
 
+-- Uithoudingsvermogen > Max aerobe testen
+create table if not exists public.max_aerobe_testen (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  log_date date not null default current_date,
+  six_min_loop_m numeric(6,1),
+  shuttle_run_m numeric(6,1),
+  cooper_test_m numeric(6,1),
+  pwc170_watt numeric(6,1),
+  one_mile_time text,
+  photo_path text,
+  created_at timestamptz not null default now()
+);
+
 -- Bestaande tabellen (indien al eerder aangemaakt zonder foto-kolom) bijwerken
 alter table public.notes add column if not exists photo_path text;
 alter table public.results add column if not exists photo_path text;
@@ -79,6 +93,7 @@ alter table public.clients enable row level security;
 alter table public.notes enable row level security;
 alter table public.results enable row level security;
 alter table public.test_results enable row level security;
+alter table public.max_aerobe_testen enable row level security;
 
 drop policy if exists "coach manages own clients" on public.clients;
 create policy "coach manages own clients" on public.clients
@@ -103,6 +118,12 @@ create policy "coach manages test_results of own clients" on public.test_results
   for all
   using (exists (select 1 from public.clients c where c.id = test_results.client_id and c.coach_id = auth.uid()))
   with check (exists (select 1 from public.clients c where c.id = test_results.client_id and c.coach_id = auth.uid()));
+
+drop policy if exists "coach manages max_aerobe_testen of own clients" on public.max_aerobe_testen;
+create policy "coach manages max_aerobe_testen of own clients" on public.max_aerobe_testen
+  for all
+  using (exists (select 1 from public.clients c where c.id = max_aerobe_testen.client_id and c.coach_id = auth.uid()))
+  with check (exists (select 1 from public.clients c where c.id = max_aerobe_testen.client_id and c.coach_id = auth.uid()));
 
 -- Foto's bij Notities/Resultaten/Test resultaten: privé Storage bucket.
 -- Bestandspad is altijd "<client_id>/<bestandsnaam>" — de policy hieronder
