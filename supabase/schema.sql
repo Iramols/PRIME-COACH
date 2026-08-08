@@ -134,6 +134,18 @@ create table if not exists public.kracht_testen (
   created_at timestamptz not null default now()
 );
 
+-- Snelheid
+create table if not exists public.snelheid_testen (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  log_date date not null default current_date,
+  ten_x_5m_loop_sec numeric(4,1),
+  fast_feet_sec numeric(5,1),
+  t_test_sec numeric(5,1),
+  photo_path text,
+  created_at timestamptz not null default now()
+);
+
 -- PWC170 is op verzoek weer verwijderd uit Max aerobe testen
 alter table public.max_aerobe_testen drop column if exists pwc170_watt;
 
@@ -165,6 +177,7 @@ alter table public.max_aerobe_testen enable row level security;
 alter table public.sub_max_aerobe_testen enable row level security;
 alter table public.anaerobe_testen enable row level security;
 alter table public.kracht_testen enable row level security;
+alter table public.snelheid_testen enable row level security;
 
 drop policy if exists "coach manages own clients" on public.clients;
 create policy "coach manages own clients" on public.clients
@@ -215,7 +228,13 @@ create policy "coach manages kracht_testen of own clients" on public.kracht_test
   using (exists (select 1 from public.clients c where c.id = kracht_testen.client_id and c.coach_id = auth.uid()))
   with check (exists (select 1 from public.clients c where c.id = kracht_testen.client_id and c.coach_id = auth.uid()));
 
--- Foto's bij Notities/Resultaten/Lenigheid/Uithoudingsvermogen/Kracht: privé Storage bucket.
+drop policy if exists "coach manages snelheid_testen of own clients" on public.snelheid_testen;
+create policy "coach manages snelheid_testen of own clients" on public.snelheid_testen
+  for all
+  using (exists (select 1 from public.clients c where c.id = snelheid_testen.client_id and c.coach_id = auth.uid()))
+  with check (exists (select 1 from public.clients c where c.id = snelheid_testen.client_id and c.coach_id = auth.uid()));
+
+-- Foto's bij Notities/Resultaten/Lenigheid/Uithoudingsvermogen/Kracht/Snelheid: privé Storage bucket.
 -- Bestandspad is altijd "<client_id>/<bestandsnaam>" — de policy hieronder
 -- controleert dat de map (client_id) bij een klant van de ingelogde coach hoort.
 insert into storage.buckets (id, name, public)

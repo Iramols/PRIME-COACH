@@ -39,4 +39,5 @@ export const NAV_TABS: (NavTab | NavGroup)[] = [
       { href: "uithoudingsvermogen/anaeroob", label: "Anaerobe testen" },
     ],
   },
+  { href: "snelheid", label: "Snelheid" },
 ];

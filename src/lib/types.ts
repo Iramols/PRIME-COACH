@@ -98,3 +98,14 @@ export type KrachtTest = {
   photo_path: string | null;
   created_at: string;
 };
+
+export type SnelheidTest = {
+  id: string;
+  client_id: string;
+  log_date: string;
+  ten_x_5m_loop_sec: number | null;
+  fast_feet_sec: number | null;
+  t_test_sec: number | null;
+  photo_path: string | null;
+  created_at: string;
+};
