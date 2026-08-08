@@ -109,3 +109,13 @@ export type SnelheidTest = {
   photo_path: string | null;
   created_at: string;
 };
+
+export type CoordinatieTest = {
+  id: string;
+  client_id: string;
+  log_date: string;
+  indian_hop_test: number | null;
+  hexagon_obstacle_test: number | null;
+  photo_path: string | null;
+  created_at: string;
+};
