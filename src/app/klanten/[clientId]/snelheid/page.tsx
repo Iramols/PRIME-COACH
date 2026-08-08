@@ -38,7 +38,7 @@ export default async function SnelheidPage({
         columns={[
           {
             key: "ten_x_5m_loop_sec",
-            label: "10x 5m loop (0,1 sec)",
+            label: "10x 5m loop (0.1x sec)",
             type: "number",
           },
           { key: "fast_feet_sec", label: "Snelle voeten (sec)", type: "number" },
