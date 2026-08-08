@@ -119,3 +119,15 @@ export type CoordinatieTest = {
   photo_path: string | null;
   created_at: string;
 };
+
+export type VetpercentageTest = {
+  id: string;
+  client_id: string;
+  log_date: string;
+  triceps_skinfold_mm: number | null;
+  biceps_skinfold_mm: number | null;
+  subscapular_skinfold_mm: number | null;
+  suprailiac_skinfold_mm: number | null;
+  photo_path: string | null;
+  created_at: string;
+};

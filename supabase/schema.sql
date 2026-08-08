@@ -157,6 +157,19 @@ create table if not exists public.coordinatie_testen (
   created_at timestamptz not null default now()
 );
 
+-- Vetpercentage (huidplooimetingen)
+create table if not exists public.vetpercentage_testen (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  log_date date not null default current_date,
+  triceps_skinfold_mm numeric(5,1),
+  biceps_skinfold_mm numeric(5,1),
+  subscapular_skinfold_mm numeric(5,1),
+  suprailiac_skinfold_mm numeric(5,1),
+  photo_path text,
+  created_at timestamptz not null default now()
+);
+
 -- PWC170 is op verzoek weer verwijderd uit Max aerobe testen
 alter table public.max_aerobe_testen drop column if exists pwc170_watt;
 
@@ -190,6 +203,7 @@ alter table public.anaerobe_testen enable row level security;
 alter table public.kracht_testen enable row level security;
 alter table public.snelheid_testen enable row level security;
 alter table public.coordinatie_testen enable row level security;
+alter table public.vetpercentage_testen enable row level security;
 
 drop policy if exists "coach manages own clients" on public.clients;
 create policy "coach manages own clients" on public.clients
@@ -251,6 +265,12 @@ create policy "coach manages coordinatie_testen of own clients" on public.coordi
   for all
   using (exists (select 1 from public.clients c where c.id = coordinatie_testen.client_id and c.coach_id = auth.uid()))
   with check (exists (select 1 from public.clients c where c.id = coordinatie_testen.client_id and c.coach_id = auth.uid()));
+
+drop policy if exists "coach manages vetpercentage_testen of own clients" on public.vetpercentage_testen;
+create policy "coach manages vetpercentage_testen of own clients" on public.vetpercentage_testen
+  for all
+  using (exists (select 1 from public.clients c where c.id = vetpercentage_testen.client_id and c.coach_id = auth.uid()))
+  with check (exists (select 1 from public.clients c where c.id = vetpercentage_testen.client_id and c.coach_id = auth.uid()));
 
 -- Foto's bij Notities/Resultaten/Lenigheid/Uithoudingsvermogen/Kracht/Snelheid: privé Storage bucket.
 -- Bestandspad is altijd "<client_id>/<bestandsnaam>" — de policy hieronder

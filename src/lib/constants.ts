@@ -41,4 +41,5 @@ export const NAV_TABS: (NavTab | NavGroup)[] = [
   },
   { href: "snelheid", label: "Snelheid" },
   { href: "coordinatie", label: "Coördinatie" },
+  { href: "vetpercentage", label: "Vetpercentage" },
 ];
