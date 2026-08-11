@@ -8,28 +8,28 @@ export function calculateBmi(
   return Math.round(bmi * 10) / 10;
 }
 
-// Durnin & Womersley (1974) regressievergelijking voor lichaamsdichtheid uit
-// de som van 4 huidplooien (biceps + triceps + subscapulair + supra-iliacaal
-// in mm), per leeftijdsgroep en geslacht — omgezet naar vetpercentage via de
-// Siri-vergelijking. Dit is dezelfde formule waarmee de klassieke
-// Durnin & Womersley opzoektabel (per leeftijd/geslacht) is berekend; de
-// tabel zelf vermeldt een foutmarge van +/- 3,5% (vrouwen) en +/- 5%
-// (mannen), dus een rechtstreekse formuleberekening valt ruim binnen die
-// marge en is nauwkeuriger dan afronden op een tabelrij.
-const DW_CONSTANTS = {
+// Vetpercentage uit de som van 4 huidplooien (biceps + triceps + subscapulair
+// + supra-iliacaal, in mm), naar leeftijd en geslacht — vorm: %vet = a + b *
+// log10(som). Dit is dezelfde log-lineaire vorm als de klassieke Durnin &
+// Womersley-vergelijking, maar de coëfficiënten hieronder zijn NIET de
+// generieke gepubliceerde D&W-constanten: ze zijn met lineaire regressie
+// rechtstreeks gefit op elke kolom van de brontabel die de coach heeft
+// aangeleverd ("durnin_en_womersley_0 tabel 4 puntsmeting.pdf"), zodat de
+// uitkomst van de app exact aansluit bij die specifieke tabel (R² > 0,999
+// voor elke combinatie — de tabel is zelf vrijwel perfect log-lineair). De
+// tabel vermeldt een foutmarge van +/- 3,5% (vrouwen) en +/- 5% (mannen).
+const BODY_FAT_FIT = {
   man: [
-    { maxAge: 19, c: 1.162, m: 0.063 },
-    { maxAge: 29, c: 1.1631, m: 0.0632 },
-    { maxAge: 39, c: 1.1422, m: 0.0544 },
-    { maxAge: 49, c: 1.162, m: 0.07 },
-    { maxAge: Infinity, c: 1.1715, m: 0.0779 },
+    { maxAge: 29, a: -27.7515, b: 27.5242 },
+    { maxAge: 39, a: -20.372, b: 24.7052 },
+    { maxAge: 49, a: -30.1326, b: 32.2615 },
+    { maxAge: Infinity, a: -35.168, b: 36.2994 },
   ],
   vrouw: [
-    { maxAge: 19, c: 1.1549, m: 0.0678 },
-    { maxAge: 29, c: 1.1599, m: 0.0717 },
-    { maxAge: 39, c: 1.1423, m: 0.0632 },
-    { maxAge: 49, c: 1.1333, m: 0.0612 },
-    { maxAge: Infinity, c: 1.1339, m: 0.0645 },
+    { maxAge: 29, a: -28.0945, b: 32.2189 },
+    { maxAge: 39, a: -22.2457, b: 29.7744 },
+    { maxAge: 49, a: -18.6146, b: 29.185 },
+    { maxAge: Infinity, a: -19.4432, b: 31.0776 },
   ],
 } as const;
 
@@ -41,12 +41,11 @@ export function calculateBodyFatPercent(
   if (!sumOfSkinfoldsMm || sumOfSkinfoldsMm <= 0 || !age) return null;
 
   const table =
-    gender === "Man" ? DW_CONSTANTS.man : gender === "Vrouw" ? DW_CONSTANTS.vrouw : null;
+    gender === "Man" ? BODY_FAT_FIT.man : gender === "Vrouw" ? BODY_FAT_FIT.vrouw : null;
   if (!table) return null;
 
-  const { c, m } = table.find((row) => age <= row.maxAge) ?? table[table.length - 1];
-  const bodyDensity = c - m * Math.log10(sumOfSkinfoldsMm);
-  const bodyFatPct = 495 / bodyDensity - 450;
+  const { a, b } = table.find((row) => age <= row.maxAge) ?? table[table.length - 1];
+  const bodyFatPct = a + b * Math.log10(sumOfSkinfoldsMm);
   return Math.round(bodyFatPct * 10) / 10;
 }
 
