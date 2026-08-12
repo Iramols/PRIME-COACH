@@ -42,7 +42,8 @@ export type LenigheidTest = {
   client_id: string;
   log_date: string;
   sit_reach_cm: number | null;
-  shoulder_stretch_cm: number | null;
+  shoulder_stretch_left_cm: number | null;
+  shoulder_stretch_right_cm: number | null;
   straight_leg_bend_cm: number | null;
   photo_path: string | null;
   created_at: string;

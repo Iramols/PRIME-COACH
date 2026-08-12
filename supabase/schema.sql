@@ -67,17 +67,29 @@ begin
   end if;
 end $$;
 
--- Lenigheid: sit & reach, schouderstretch, buigen met gestrekte knieën (alle in cm)
+-- Lenigheid: sit & reach, schouderstretch (links/rechts), buigen met gestrekte knieën (alle in cm)
 create table if not exists public.lenigheid_testen (
   id uuid primary key default gen_random_uuid(),
   client_id uuid not null references public.clients(id) on delete cascade,
   log_date date not null default current_date,
   sit_reach_cm numeric(5,1),
-  shoulder_stretch_cm numeric(5,1),
+  shoulder_stretch_left_cm numeric(5,1),
+  shoulder_stretch_right_cm numeric(5,1),
   straight_leg_bend_cm numeric(5,1),
   photo_path text,
   created_at timestamptz not null default now()
 );
+
+-- Schouderstretch is op verzoek gesplitst in links/rechts. Bestaande waarden
+-- (uit de vorige, ongesplitste kolom) worden als "links" bewaard zodat er
+-- geen data verloren gaat.
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'lenigheid_testen' and column_name = 'shoulder_stretch_cm') then
+    alter table public.lenigheid_testen rename column shoulder_stretch_cm to shoulder_stretch_left_cm;
+  end if;
+end $$;
+alter table public.lenigheid_testen add column if not exists shoulder_stretch_right_cm numeric(5,1);
 
 -- Uithoudingsvermogen > Max aerobe testen
 create table if not exists public.max_aerobe_testen (

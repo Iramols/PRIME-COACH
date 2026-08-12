@@ -38,8 +38,13 @@ export default async function LenigheidPage({
         columns={[
           { key: "sit_reach_cm", label: "Sit & reach (cm)", type: "number" },
           {
-            key: "shoulder_stretch_cm",
-            label: "Schouderstretch (cm)",
+            key: "shoulder_stretch_left_cm",
+            label: "Schouderstretch links (cm)",
+            type: "number",
+          },
+          {
+            key: "shoulder_stretch_right_cm",
+            label: "Schouderstretch rechts (cm)",
             type: "number",
           },
           {

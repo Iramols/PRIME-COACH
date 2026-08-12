@@ -16,7 +16,8 @@ function fields(formData: FormData) {
   return {
     log_date: String(formData.get("log_date")),
     sit_reach_cm: numOrNull(formData.get("sit_reach_cm")),
-    shoulder_stretch_cm: numOrNull(formData.get("shoulder_stretch_cm")),
+    shoulder_stretch_left_cm: numOrNull(formData.get("shoulder_stretch_left_cm")),
+    shoulder_stretch_right_cm: numOrNull(formData.get("shoulder_stretch_right_cm")),
     straight_leg_bend_cm: numOrNull(formData.get("straight_leg_bend_cm")),
   };
 }
